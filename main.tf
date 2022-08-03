@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-# TODO: Create Network and use it. (Policy often doesn't allow default network)
-locals {
-  defaultnetwork = "projects/${var.project_id}/global/networks/default"
-}
 
 # Enabling services in your GCP project
 variable "gcp_service_list" {
@@ -36,9 +32,13 @@ resource "google_project_service" "all" {
   disable_on_destroy         = false
 }
 
+resource "google_compute_network" "vpc_network" {
+  name = "${var.deployment_name}-network"
+}
+
 # Create Instance Exemplar on which to base Managed VMs
 resource "google_compute_instance" "exemplar" {
-  name         = "${var.basename}-exemplar"
+  name         = "${var.deployment_name}-exemplar"
   machine_type = "n1-standard-1"
   zone         = var.zone
   project      = var.project_id
@@ -48,7 +48,7 @@ resource "google_compute_instance" "exemplar" {
 
   boot_disk {
     auto_delete = true
-    device_name = "${var.basename}-exemplar"
+    device_name = "${var.deployment_name}-exemplar"
     initialize_params {
       image = "family/debian-10"
       size  = 200
@@ -57,7 +57,7 @@ resource "google_compute_instance" "exemplar" {
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.vpc_network.id
     access_config {
       // Ephemeral public IP
     }
@@ -77,7 +77,7 @@ resource "time_sleep" "startup_completion" {
 
 resource "google_compute_snapshot" "snapshot" {
   project           = var.project_id
-  name              = "${var.basename}-snapshot"
+  name              = "${var.deployment_name}-snapshot"
   source_disk       = google_compute_instance.exemplar.boot_disk[0].source
   zone              = var.zone
   storage_locations = ["${var.region}"]
@@ -87,8 +87,8 @@ resource "google_compute_snapshot" "snapshot" {
 # Create Disk Image for Instance Template
 resource "google_compute_image" "exemplar" {
   project         = var.project_id
-  name            = "${var.basename}-latest"
-  family          = var.basename
+  name            = "${var.deployment_name}-latest"
+  family          = var.deployment_name
   source_snapshot = google_compute_snapshot.snapshot.self_link
   depends_on      = [google_compute_snapshot.snapshot]
 }
@@ -96,7 +96,7 @@ resource "google_compute_image" "exemplar" {
 # Create Instance Template
 resource "google_compute_instance_template" "default" {
   project     = var.project_id
-  name        = "${var.basename}-template"
+  name        = "${var.deployment_name}-template"
   description = "This template is used to create app server instances."
   tags        = ["httpserver"]
 
@@ -114,7 +114,7 @@ resource "google_compute_instance_template" "default" {
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.vpc_network.id
   }
 
   depends_on = [google_compute_image.exemplar]
@@ -123,10 +123,10 @@ resource "google_compute_instance_template" "default" {
 # Create Managed Instance Group
 resource "google_compute_instance_group_manager" "default" {
   project            = var.project_id
-  name               = "${var.basename}-mig"
+  name               = "${var.deployment_name}-mig"
   zone               = var.zone
   target_size        = var.nodes
-  base_instance_name = "${var.basename}-mig"
+  base_instance_name = "${var.deployment_name}-mig"
 
 
   version {
@@ -144,14 +144,14 @@ resource "google_compute_instance_group_manager" "default" {
 # Creating External IP
 resource "google_compute_global_address" "default" {
   project    = var.project_id
-  name       = "${var.basename}-ip"
+  name       = "${var.deployment_name}-ip"
   ip_version = "IPV4"
 }
 
 # Standing up Load Balancer
 resource "google_compute_health_check" "http" {
   project = var.project_id
-  name    = "${var.basename}-health-chk"
+  name    = "${var.deployment_name}-health-chk"
 
   tcp_health_check {
     port = "80"
@@ -160,8 +160,8 @@ resource "google_compute_health_check" "http" {
 
 resource "google_compute_firewall" "allow-health-check" {
   project       = var.project_id
-  name          = "allow-health-check"
-  network       = local.defaultnetwork
+  name          = "${var.deployment_name}-allow-health-check"
+  network       = google_compute_network.vpc_network.self_link
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
 
   allow {
@@ -172,7 +172,7 @@ resource "google_compute_firewall" "allow-health-check" {
 
 resource "google_compute_backend_service" "default" {
   project               = var.project_id
-  name                  = "${var.basename}-service"
+  name                  = "${var.deployment_name}-service"
   load_balancing_scheme = "EXTERNAL"
   protocol              = "HTTP"
   port_name             = "http"
@@ -185,20 +185,20 @@ resource "google_compute_backend_service" "default" {
 
 resource "google_compute_url_map" "lb" {
   project         = var.project_id
-  name            = "${var.basename}-lb"
+  name            = "${var.deployment_name}-lb"
   default_service = google_compute_backend_service.default.id
 }
 
 # Enabling HTTP
 resource "google_compute_target_http_proxy" "default" {
   project = var.project_id
-  name    = "${var.basename}-lb-proxy"
+  name    = "${var.deployment_name}-lb-proxy"
   url_map = google_compute_url_map.lb.id
 }
 
 resource "google_compute_forwarding_rule" "google_compute_forwarding_rule" {
   project               = var.project_id
-  name                  = "${var.basename}-http-lb-forwarding-rule"
+  name                  = "${var.deployment_name}-http-lb-forwarding-rule"
   provider              = google-beta
   region                = "none"
   load_balancing_scheme = "EXTERNAL"

@@ -33,3 +33,9 @@ variable "nodes" {
   type        = string
   description = "The number of nodes in the manged instance group"
 }
+
+variable "deployment_name" {
+  type        = string
+  description = "The name of this particular deployment, will get added as a prefix to most resources."
+}
+
