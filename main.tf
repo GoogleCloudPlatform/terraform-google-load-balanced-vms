@@ -15,6 +15,12 @@
  */
 
 
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
+
+
 # Enabling services in your GCP project
 variable "gcp_service_list" {
   description = "The list of apis necessary for the project"
@@ -26,7 +32,7 @@ variable "gcp_service_list" {
 
 resource "google_project_service" "all" {
   for_each                   = toset(var.gcp_service_list)
-  project                    = var.project_number
+  project                    = data.google_project.project.number
   service                    = each.key
   disable_dependent_services = false
   disable_on_destroy         = false
@@ -34,6 +40,7 @@ resource "google_project_service" "all" {
 
 resource "google_compute_network" "vpc_network" {
   name = "${var.deployment_name}-network"
+  project      = var.project_id
 }
 
 # Create Instance Exemplar on which to base Managed VMs
@@ -78,7 +85,7 @@ resource "time_sleep" "startup_completion" {
 resource "google_compute_snapshot" "snapshot" {
   project           = var.project_id
   name              = "${var.deployment_name}-snapshot"
-  source_disk       = google_compute_instance.exemplar.boot_disk[0].source
+  source_disk       = google_compute_instance.exemplar.boot_disk[0].device_name
   zone              = var.zone
   storage_locations = ["${var.region}"]
   depends_on        = [time_sleep.startup_completion]

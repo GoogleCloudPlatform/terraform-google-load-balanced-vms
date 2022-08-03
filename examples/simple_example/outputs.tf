@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-output "bucket_name" {
-  description = "The name of the bucket."
-  value       = module.load_balanced_vms.bucket_name
+output "endpoint" {
+  value       = module.load_balanced_vms.endpoint
+  description = "The url of the front end which we want to surface to the user"
+}
+
+# Output loadbalancer details
+output "console_page" {
+  value       = module.console_page
+  description = "The url of the load balancer page in console"
 }

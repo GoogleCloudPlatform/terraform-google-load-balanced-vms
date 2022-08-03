@@ -18,5 +18,8 @@ module "load_balanced_vms" {
   source = "../.."
 
   project_id  = var.project_id
-  bucket_name = var.bucket_name
+  region = var.region
+  zone = var.zone
+  nodes = var.nodes
+  deployment_name = var.deployment_name
 }
