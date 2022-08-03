@@ -15,17 +15,21 @@
  */
 
 variable "project_id" {
+  type        = string
   description = "The project ID to deploy to"
 }
 
 variable "region" {
- description = "The Compute Region to deploy to"
+  type        = string
+  description = "The Compute Region to deploy to"
 }
 
 variable "zone" {
- description = "The Compute Zonbe to deploy to"
+  type        = string
+  description = "The Compute Zonbe to deploy to"
 }
 
 variable "nodes" {
+  type        = string
   description = "The number of nodes in the manged instance group"
 }
