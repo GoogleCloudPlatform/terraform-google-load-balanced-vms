@@ -21,6 +21,6 @@ output "endpoint" {
 
 # Output loadbalancer details
 output "console_page" {
-  value       = module.console_page
+  value       = module.load_balanced_vms.console_page
   description = "The url of the load balancer page in console"
 }
