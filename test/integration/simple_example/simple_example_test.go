@@ -47,7 +47,7 @@ func TestCount(t *testing.T) {
 	example.DefineVerify(func(assert *assert.Assertions) {
 		// TODO: See if there is a better way to use input ENV variables.
 		// I don't want these to be output, but it might be required.
-		projectID := os.Getenv("TF_VAR_project_id")
+		projectID := example.GetStringOutput("project_id")
 		prefix := os.Getenv("TF_VAR_deployment_name")
 		nodes := os.Getenv("TF_VAR_nodes")
 		cmdstr := "compute instances list"

@@ -31,8 +31,6 @@ docker_run:
 		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		/bin/bash
 
-# TODO: See if these environment variables changes were necessary. 
-# Execute prepare tests within the docker container
 .PHONY: docker_test_prepare
 docker_test_prepare:
 	docker run --rm -it \
@@ -40,10 +38,6 @@ docker_test_prepare:
 		-e TF_VAR_org_id \
 		-e TF_VAR_folder_id \
 		-e TF_VAR_billing_account \
-		-e TF_VAR_region \
-		-e TF_VAR_zone\
-		-e TF_VAR_nodes \
-		-e TF_VAR_deployment_name \
 		-v "$(CURDIR)":/workspace \
 		$(REGISTRY_URL)/${DOCKER_IMAGE_DEVELOPER_TOOLS}:${DOCKER_TAG_VERSION_DEVELOPER_TOOLS} \
 		/usr/local/bin/execute_with_credentials.sh prepare_environment
