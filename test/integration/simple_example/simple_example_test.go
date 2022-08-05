@@ -16,7 +16,6 @@ package multiple_buckets
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"testing"
 
@@ -26,46 +25,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestServiceActivated(t *testing.T) {
+func TestSimpleExample(t *testing.T) {
 	example := tft.NewTFBlueprintTest(t)
 
-	example.DefineVerify(func(assert *assert.Assertions) {
-		example.DefaultVerify(assert)
-
-		projectID := os.Getenv("TF_VAR_project_id")
-		services := gcloud.Run(t, "services list", gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})).Array()
-
-		match := utils.GetFirstMatchResult(t, services, "config.name", "compute.googleapis.com")
-		assert.Equal("ENABLED", match.Get("state").String(), "compute service should be enabled")
-	})
-	example.Test()
-}
-
-func TestCount(t *testing.T) {
-	example := tft.NewTFBlueprintTest(t)
-
-	example.DefineVerify(func(assert *assert.Assertions) {
-		// TODO: See if there is a better way to use input ENV variables.
-		// I don't want these to be output, but it might be required.
-		projectID := example.GetStringOutput("project_id")
-		prefix := os.Getenv("TF_VAR_deployment_name")
-		nodes := os.Getenv("TF_VAR_nodes")
-		cmdstr := "compute instances list"
-		ops := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json", "--filter", fmt.Sprintf("name:%s-mig", prefix)})
-		template := gcloud.Run(t, cmdstr, ops).Array()
-		assert.Equal(nodes, strconv.Itoa(len(template)), fmt.Sprintf("should be %s instances", nodes))
-	})
-	example.Test()
-}
-
-func TestInfrastructureExists(t *testing.T) {
-	// TODO: See if there is a better way to use input ENV variables.
-	// I don't want these to be output, but it might be required.
-	projectID := os.Getenv("TF_VAR_project_id")
-	prefix := os.Getenv("TF_VAR_deployment_name")
-	zone := os.Getenv("TF_VAR_zone")
-
-	example := tft.NewTFBlueprintTest(t)
+	projectID := example.GetTFSetupStringOutput("project_id")
+	prefix := "load-balanced-vms"
+	nodes := "3"
+	zone := "us-central1-a"
 
 	tests := map[string]struct {
 		subsection string
@@ -82,10 +48,9 @@ func TestInfrastructureExists(t *testing.T) {
 		"Backend Services":    {subsection: "backend-services", global: true, expected: fmt.Sprintf("%s-service", prefix)},
 		"Address":             {subsection: "addresses", global: true, expected: fmt.Sprintf("%s-ip", prefix)},
 	}
-
-	for name, tc := range tests {
-		t.Run(name, func(t *testing.T) {
-			example.DefineVerify(func(assert *assert.Assertions) {
+	example.DefineVerify(func(assert *assert.Assertions) {
+		for name, tc := range tests {
+			t.Run(name, func(t *testing.T) {
 				gcloudOps := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})
 				if tc.global {
 					gcloudOps = gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json", "--global"})
@@ -100,7 +65,20 @@ func TestInfrastructureExists(t *testing.T) {
 				match := utils.GetFirstMatchResult(t, template, "name", tc.expected)
 				assert.Equal(tc.expected, match.Get("name").String(), fmt.Sprintf("should find %s", tc.expected))
 			})
-			example.Test()
+		}
+
+		t.Run("Instance Count", func(t *testing.T) {
+			cmdstr := "compute instances list"
+			ops := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json", "--filter", fmt.Sprintf("name:%s-mig", prefix)})
+			template := gcloud.Run(t, cmdstr, ops).Array()
+			assert.Equal(nodes, strconv.Itoa(len(template)), fmt.Sprintf("should be %s instances", nodes))
 		})
-	}
+
+		t.Run("Service Activated", func(t *testing.T) {
+			services := gcloud.Run(t, "services list", gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})).Array()
+			match := utils.GetFirstMatchResult(t, services, "config.name", "compute.googleapis.com")
+			assert.Equal("ENABLED", match.Get("state").String(), "compute service should be enabled")
+		})
+	})
+	example.Test()
 }
