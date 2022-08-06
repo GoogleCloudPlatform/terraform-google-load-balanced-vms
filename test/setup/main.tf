@@ -18,7 +18,7 @@ module "project" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 11.0"
 
-  name              = "ci-load-balanced-vms"
+  name              = "load-balanced-vms"
   random_project_id = "true"
   org_id            = var.org_id
   folder_id         = var.folder_id

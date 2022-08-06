@@ -16,12 +16,12 @@
 
 # Waiting for website to be serving http
 output "endpoint" {
-  value       = google_compute_global_address.default.address
+  value       = module.gce-lb-http.external_ip
   description = "The url of the front end which we want to surface to the user"
 }
 
 # Output loadbalancer details
 output "console_page" {
-  value       = "/net-services/loadbalancing/details/http/${google_compute_url_map.lb.name}?project=${var.project_id}"
+  value       = "/net-services/loadbalancing/details/http/${module.gce-lb-http.url_map[0]}?project=${var.project_id}"
   description = "The url of the load balancer page in console"
 }

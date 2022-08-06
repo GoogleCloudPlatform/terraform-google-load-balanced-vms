@@ -42,11 +42,11 @@ func TestSimpleExample(t *testing.T) {
 		"Instance Group":      {subsection: "instance-groups managed", global: false, zone: true, expected: fmt.Sprintf("%s-mig", prefix)},
 		"Image":               {subsection: "images", global: false, expected: fmt.Sprintf("%s-latest", prefix)},
 		"Template":            {subsection: "instance-templates", global: false, expected: fmt.Sprintf("%s-template", prefix)},
-		"Forwarding Rules":    {subsection: "forwarding-rules", global: true, expected: fmt.Sprintf("%s-http-lb-forwarding-rule", prefix)},
-		"Target HTTP Proxies": {subsection: "target-http-proxies", global: true, expected: fmt.Sprintf("%s-lb-proxy", prefix)},
-		"URL Maps":            {subsection: "url-maps", global: true, expected: fmt.Sprintf("%s-lb", prefix)},
-		"Backend Services":    {subsection: "backend-services", global: true, expected: fmt.Sprintf("%s-service", prefix)},
-		"Address":             {subsection: "addresses", global: true, expected: fmt.Sprintf("%s-ip", prefix)},
+		"Forwarding Rules":    {subsection: "forwarding-rules", global: true, expected: fmt.Sprintf("%s-lb", prefix)},
+		"Target HTTP Proxies": {subsection: "target-http-proxies", global: true, expected: fmt.Sprintf("%s-lb-http-proxy", prefix)},
+		"URL Maps":            {subsection: "url-maps", global: true, expected: fmt.Sprintf("%s-lb-url-map", prefix)},
+		"Backend Services":    {subsection: "backend-services", global: true, expected: fmt.Sprintf("%s-lb-backend-default", prefix)},
+		"Address":             {subsection: "addresses", global: true, expected: fmt.Sprintf("%s-lb-address", prefix)},
 	}
 	example.DefineVerify(func(assert *assert.Assertions) {
 		for name, tc := range tests {
@@ -63,7 +63,7 @@ func TestSimpleExample(t *testing.T) {
 				template := gcloud.Run(t, cmdstr, gcloudOps).Array()
 
 				match := utils.GetFirstMatchResult(t, template, "name", tc.expected)
-				assert.Equal(tc.expected, match.Get("name").String(), fmt.Sprintf("should find %s", tc.expected))
+				assert.Equal(tc.expected, match.Get("name").String(), fmt.Sprintf("expected %s", tc.expected))
 			})
 		}
 

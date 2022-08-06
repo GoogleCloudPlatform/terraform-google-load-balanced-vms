@@ -19,29 +19,41 @@ data "google_project" "project" {
   project_id = var.project_id
 }
 
-
-
 # Enabling services in your GCP project
-variable "gcp_service_list" {
-  description = "The list of apis necessary for the project"
-  type        = list(string)
-  default = [
-    "compute.googleapis.com",
+module "project-services" {
+  source                      = "terraform-google-modules/project-factory/google//modules/project_services"
+  version                     = "13.0.0"
+  disable_services_on_destroy = false
+
+  project_id = var.project_id
+
+  activate_apis = [
+    "compute.googleapis.com"
   ]
 }
 
-resource "google_project_service" "all" {
-  for_each                   = toset(var.gcp_service_list)
-  project                    = data.google_project.project.number
-  service                    = each.key
-  disable_dependent_services = false
-  disable_on_destroy         = false
+module "vpc" {
+  source  = "terraform-google-modules/network/google"
+  version = "~> 4.0"
+
+  project_id   = var.project_id
+  network_name = "${var.deployment_name}-network"
+  routing_mode = "GLOBAL"
+
+  subnets = [
+    {
+      subnet_name   = "subnet-01"
+      subnet_ip     = "10.10.10.0/24"
+      subnet_region = var.region
+    }
+  ]
+
+  depends_on = [
+    module.project-services
+  ]
+
 }
 
-resource "google_compute_network" "vpc_network" {
-  name = "${var.deployment_name}-network"
-  project      = var.project_id
-}
 
 # Create Instance Exemplar on which to base Managed VMs
 resource "google_compute_instance" "exemplar" {
@@ -64,13 +76,14 @@ resource "google_compute_instance" "exemplar" {
   }
 
   network_interface {
-    network = google_compute_network.vpc_network.id
+    subnetwork         = "subnet-01"
+    subnetwork_project = var.project_id
     access_config {
       // Ephemeral public IP
     }
   }
 
-  depends_on = [google_project_service.all]
+  depends_on = [module.vpc]
 }
 
 data "local_file" "index" {
@@ -121,7 +134,11 @@ resource "google_compute_instance_template" "default" {
   }
 
   network_interface {
-    network = google_compute_network.vpc_network.id
+    subnetwork         = module.vpc.subnets["us-central1/subnet-01"].self_link
+    subnetwork_project = var.project_id
+    access_config {
+      // Ephemeral public IP
+    }
   }
 
   depends_on = [google_compute_image.exemplar]
@@ -148,68 +165,72 @@ resource "google_compute_instance_group_manager" "default" {
   depends_on = [google_compute_instance_template.default]
 }
 
-# Creating External IP
-resource "google_compute_global_address" "default" {
-  project    = var.project_id
-  name       = "${var.deployment_name}-ip"
-  ip_version = "IPV4"
-}
 
-# Standing up Load Balancer
-resource "google_compute_health_check" "http" {
+
+module "gce-lb-http" {
+  source  = "GoogleCloudPlatform/lb-http/google"
+  version = "6.3.0"
+
   project = var.project_id
-  name    = "${var.deployment_name}-health-chk"
+  name    = "${var.deployment_name}-lb"
 
-  tcp_health_check {
-    port = "80"
+  firewall_networks = [module.vpc.network_name]
+
+  backends = {
+    default = {
+      description                     = null
+      protocol                        = "HTTP"
+      port                            = "80"
+      port_name                       = "http"
+      timeout_sec                     = 10
+      enable_cdn                      = false
+      custom_request_headers          = null
+      custom_response_headers         = null
+      security_policy                 = null
+      connection_draining_timeout_sec = null
+      session_affinity                = null
+      affinity_cookie_ttl_sec         = null
+
+
+
+      health_check = {
+        check_interval_sec  = null
+        timeout_sec         = null
+        healthy_threshold   = null
+        unhealthy_threshold = null
+        request_path        = "/"
+        port                = "80"
+        name                = "${var.deployment_name}-health-chk"
+        host                = null
+        logging             = null
+      }
+
+      log_config = {
+        enable      = true
+        sample_rate = 1.0
+      }
+
+      groups = [
+        {
+          group                        = google_compute_instance_group_manager.default.instance_group
+          balancing_mode               = null
+          capacity_scaler              = null
+          description                  = null
+          max_connections              = null
+          max_connections_per_instance = null
+          max_connections_per_endpoint = null
+          max_rate                     = null
+          max_rate_per_instance        = null
+          max_rate_per_endpoint        = null
+          max_utilization              = null
+        },
+      ]
+
+      iap_config = {
+        enable               = false
+        oauth2_client_id     = null
+        oauth2_client_secret = null
+      }
+    }
   }
-}
-
-resource "google_compute_firewall" "allow-health-check" {
-  project       = var.project_id
-  name          = "${var.deployment_name}-allow-health-check"
-  network       = google_compute_network.vpc_network.self_link
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80"]
-  }
-}
-
-resource "google_compute_backend_service" "default" {
-  project               = var.project_id
-  name                  = "${var.deployment_name}-service"
-  load_balancing_scheme = "EXTERNAL"
-  protocol              = "HTTP"
-  port_name             = "http"
-  backend {
-    group = google_compute_instance_group_manager.default.instance_group
-  }
-
-  health_checks = [google_compute_health_check.http.id]
-}
-
-resource "google_compute_url_map" "lb" {
-  project         = var.project_id
-  name            = "${var.deployment_name}-lb"
-  default_service = google_compute_backend_service.default.id
-}
-
-# Enabling HTTP
-resource "google_compute_target_http_proxy" "default" {
-  project = var.project_id
-  name    = "${var.deployment_name}-lb-proxy"
-  url_map = google_compute_url_map.lb.id
-}
-
-resource "google_compute_forwarding_rule" "google_compute_forwarding_rule" {
-  project               = var.project_id
-  name                  = "${var.deployment_name}-http-lb-forwarding-rule"
-  provider              = google-beta
-  region                = "none"
-  load_balancing_scheme = "EXTERNAL"
-  port_range            = "80"
-  target                = google_compute_target_http_proxy.default.id
-  ip_address            = google_compute_global_address.default.id
 }
