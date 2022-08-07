@@ -31,7 +31,6 @@ Functional examples are included in the
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | deployment\_name | The name of this particular deployment, will get added as a prefix to most resources. | `string` | n/a | yes |
-| gcp\_service\_list | The list of apis necessary for the project | `list(string)` | <pre>[<br>  "compute.googleapis.com"<br>]</pre> | no |
 | nodes | The number of nodes in the manged instance group | `string` | n/a | yes |
 | project\_id | The project ID to deploy to | `string` | n/a | yes |
 | region | The Compute Region to deploy to | `string` | n/a | yes |

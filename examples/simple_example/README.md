@@ -7,11 +7,7 @@ This example illustrates how to use the `load-balanced-vms` module.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| deployment\_name | The name of this particular deployment, will get added as a prefix to most resources. | `string` | n/a | yes |
-| nodes | The number of nodes in the manged instance group | `string` | n/a | yes |
 | project\_id | The project ID to deploy to | `string` | n/a | yes |
-| region | The Compute Region to deploy to | `string` | n/a | yes |
-| zone | The Compute Zonbe to deploy to | `string` | n/a | yes |
 
 ## Outputs
 
