@@ -37,6 +37,7 @@ variable "nodes" {
 variable "deployment_name" {
   type        = string
   description = "The name of this particular deployment, will get added as a prefix to most resources."
+  default = "load-balanced-vms"
 }
 
 variable "labels" {
