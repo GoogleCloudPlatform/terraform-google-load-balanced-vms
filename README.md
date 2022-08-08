@@ -18,7 +18,10 @@ module "load_balanced_vms" {
   version = "~> 0.1"
 
   project_id  = "<PROJECT ID>"
-  bucket_name = "gcs-test-bucket"
+  region = "us-central1"
+  zone = "us-central1-a"
+  nodes = "3"
+  deployment_name = "load-balanced-vms"
 }
 ```
 
@@ -61,7 +64,7 @@ The following dependencies must be available:
 A service account with the following roles must be used to provision
 the resources of this module:
 
-- Storage Admin: `roles/storage.admin`
+- Compute Admin: `roles/compute.admin`
 
 The [Project Factory module][project-factory-module] and the
 [IAM module][iam-module] may be used in combination to provision a

@@ -22,6 +22,6 @@ output "endpoint" {
 
 # Output loadbalancer details
 output "console_page" {
-  value       = "/net-services/loadbalancing/details/http/${module.gce-lb-http.url_map[0]}?project=${var.project_id}"
+  value       = "/net-services/loadbalancing/details/http/${var.deployment_name}-lb-url-map?project=${var.project_id}"
   description = "The url of the load balancer page in console"
 }

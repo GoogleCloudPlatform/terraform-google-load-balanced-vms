@@ -16,6 +16,7 @@ package multiple_buckets
 
 import (
 	"fmt"
+	"net"
 	"strconv"
 	"testing"
 
@@ -33,23 +34,54 @@ func TestSimpleExample(t *testing.T) {
 	nodes := "3"
 	zone := "us-central1-a"
 
-	tests := map[string]struct {
-		subsection string
-		global     bool
-		zone       bool
-		expected   string
-	}{
-		"Instance Group":      {subsection: "instance-groups managed", global: false, zone: true, expected: fmt.Sprintf("%s-mig", prefix)},
-		"Image":               {subsection: "images", global: false, expected: fmt.Sprintf("%s-latest", prefix)},
-		"Template":            {subsection: "instance-templates", global: false, expected: fmt.Sprintf("%s-template", prefix)},
-		"Forwarding Rules":    {subsection: "forwarding-rules", global: true, expected: fmt.Sprintf("%s-lb", prefix)},
-		"Target HTTP Proxies": {subsection: "target-http-proxies", global: true, expected: fmt.Sprintf("%s-lb-http-proxy", prefix)},
-		"URL Maps":            {subsection: "url-maps", global: true, expected: fmt.Sprintf("%s-lb-url-map", prefix)},
-		"Backend Services":    {subsection: "backend-services", global: true, expected: fmt.Sprintf("%s-lb-backend-default", prefix)},
-		"Address":             {subsection: "addresses", global: true, expected: fmt.Sprintf("%s-lb-address", prefix)},
-	}
 	example.DefineVerify(func(assert *assert.Assertions) {
-		for name, tc := range tests {
+		example.DefaultVerify(assert)
+
+		labelTests := map[string]struct {
+			subsection string
+			name       string
+			zone       bool
+			query      string
+		}{
+			"Label: Exemplar":          {subsection: "instances", name: fmt.Sprintf("%s-exemplar", prefix), zone: true, query: "labels.load-balanced-vms"},
+			"Label: Instance Template": {subsection: "instance-templates", name: fmt.Sprintf("%s-template", prefix), query: "properties.labels.load-balanced-vms"},
+			"Label: Image":             {subsection: "images", name: fmt.Sprintf("%s-latest", prefix), query: "labels.load-balanced-vms"},
+			"Label: Snapshot":          {subsection: "snapshots", name: fmt.Sprintf("%s-snapshot", prefix), query: "labels.load-balanced-vms"},
+		}
+
+		for name, tc := range labelTests {
+			t.Run(name, func(t *testing.T) {
+				gcloudOps := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})
+				if tc.zone {
+					gcloudOps = gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json", "--zone", zone})
+				}
+
+				cmdstr := fmt.Sprintf("compute %s describe %s", tc.subsection, tc.name)
+				template := gcloud.Run(t, cmdstr, gcloudOps).Array()
+
+				match := template[0].Get(tc.query).String()
+				assert.Equal("true", match, fmt.Sprintf("expected label (loadbalanced-vms) in subsection %s to be present", tc.subsection))
+			})
+		}
+
+		existenceTests := map[string]struct {
+			subsection string
+			global     bool
+			zone       bool
+			expected   string
+		}{
+			"Existence: Snapshot":            {subsection: "snapshots", global: false, zone: false, expected: fmt.Sprintf("%s-snapshot", prefix)},
+			"Existence: Instance Group":      {subsection: "instance-groups managed", global: false, zone: true, expected: fmt.Sprintf("%s-mig", prefix)},
+			"Existence: Image":               {subsection: "images", global: false, expected: fmt.Sprintf("%s-latest", prefix)},
+			"Existence: Template":            {subsection: "instance-templates", global: false, expected: fmt.Sprintf("%s-template", prefix)},
+			"Existence: Forwarding Rules":    {subsection: "forwarding-rules", global: true, expected: fmt.Sprintf("%s-lb", prefix)},
+			"Existence: Target HTTP Proxies": {subsection: "target-http-proxies", global: true, expected: fmt.Sprintf("%s-lb-http-proxy", prefix)},
+			"Existence: URL Maps":            {subsection: "url-maps", global: true, expected: fmt.Sprintf("%s-lb-url-map", prefix)},
+			"Existence: Backend Services":    {subsection: "backend-services", global: true, expected: fmt.Sprintf("%s-lb-backend-default", prefix)},
+			"Existence: Address":             {subsection: "addresses", global: true, expected: fmt.Sprintf("%s-lb-address", prefix)},
+		}
+
+		for name, tc := range existenceTests {
 			t.Run(name, func(t *testing.T) {
 				gcloudOps := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})
 				if tc.global {
@@ -78,6 +110,16 @@ func TestSimpleExample(t *testing.T) {
 			services := gcloud.Run(t, "services list", gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})).Array()
 			match := utils.GetFirstMatchResult(t, services, "config.name", "compute.googleapis.com")
 			assert.Equal("ENABLED", match.Get("state").String(), "compute service should be enabled")
+		})
+
+		t.Run("Outputs Value", func(t *testing.T) {
+			got := example.GetStringOutput("console_page")
+			expected := fmt.Sprintf("/net-services/loadbalancing/details/http/%s-lb-url-map?project=%s", prefix, projectID)
+			assert.Equal(expected, got, "console page: expected (%s) got (%s)", expected, got)
+
+			ip := example.GetStringOutput("endpoint")
+			val := net.ParseIP(ip)
+			assert.NotNil(val, "endpoint: expected (%s) to be valid IP", ip)
 		})
 	})
 	example.Test()

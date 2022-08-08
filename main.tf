@@ -61,6 +61,7 @@ resource "google_compute_instance" "exemplar" {
   machine_type = "n1-standard-1"
   zone         = var.zone
   project      = var.project_id
+  labels = var.labels
 
   tags                    = ["http-server"]
   metadata_startup_script = "apt-get update -y \n apt-get install nginx -y \n  printf '${data.local_file.index.content}'  | tee /var/www/html/index.html \n chgrp root /var/www/html/index.html \n chown root /var/www/html/index.html \n chmod +r /var/www/html/index.html"
@@ -102,6 +103,8 @@ resource "google_compute_snapshot" "snapshot" {
   zone              = var.zone
   storage_locations = ["${var.region}"]
   depends_on        = [time_sleep.startup_completion]
+  labels = var.labels
+  
 }
 
 # Create Disk Image for Instance Template
@@ -111,6 +114,7 @@ resource "google_compute_image" "exemplar" {
   family          = var.deployment_name
   source_snapshot = google_compute_snapshot.snapshot.self_link
   depends_on      = [google_compute_snapshot.snapshot]
+  labels = var.labels
 }
 
 # Create Instance Template
@@ -119,6 +123,7 @@ resource "google_compute_instance_template" "default" {
   name        = "${var.deployment_name}-template"
   description = "This template is used to create app server instances."
   tags        = ["httpserver"]
+  labels = var.labels
 
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
 
@@ -151,6 +156,7 @@ resource "google_compute_instance_group_manager" "default" {
   zone               = var.zone
   target_size        = var.nodes
   base_instance_name = "${var.deployment_name}-mig"
+
 
 
   version {
