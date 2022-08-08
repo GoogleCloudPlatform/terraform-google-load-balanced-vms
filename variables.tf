@@ -41,5 +41,12 @@ variable "deployment_name" {
 
 variable "labels" {
   type    = map(string)
+  description = "A map of labels to apply to contained resources."
   default = {"load-balanced-vms"=true}
+}
+
+variable "enable_apis" {
+  type = string
+  description = "Whether or not to enable underlying apis in this solution. ."
+  default = true
 }

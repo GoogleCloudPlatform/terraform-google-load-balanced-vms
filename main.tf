@@ -25,7 +25,8 @@ module "project-services" {
   version                     = "13.0.0"
   disable_services_on_destroy = false
 
-  project_id = var.project_id
+  project_id  = var.project_id
+  enable_apis = var.enable_apis
 
   activate_apis = [
     "compute.googleapis.com"
@@ -54,6 +55,9 @@ module "vpc" {
 
 }
 
+data "local_file" "index" {
+  filename = "${path.module}/files/index.html"
+}
 
 # Create Instance Exemplar on which to base Managed VMs
 resource "google_compute_instance" "exemplar" {
@@ -61,7 +65,7 @@ resource "google_compute_instance" "exemplar" {
   machine_type = "n1-standard-1"
   zone         = var.zone
   project      = var.project_id
-  labels = var.labels
+  labels       = var.labels
 
   tags                    = ["http-server"]
   metadata_startup_script = "apt-get update -y \n apt-get install nginx -y \n  printf '${data.local_file.index.content}'  | tee /var/www/html/index.html \n chgrp root /var/www/html/index.html \n chown root /var/www/html/index.html \n chmod +r /var/www/html/index.html"
@@ -87,24 +91,19 @@ resource "google_compute_instance" "exemplar" {
   depends_on = [module.vpc]
 }
 
-data "local_file" "index" {
-  filename = "${path.module}/code/index.html"
-}
-
 resource "time_sleep" "startup_completion" {
   create_duration = "120s"
   depends_on      = [google_compute_instance.exemplar]
 }
 
-resource "google_compute_snapshot" "snapshot" {
+resource "google_compute_snapshot" "main" {
   project           = var.project_id
   name              = "${var.deployment_name}-snapshot"
   source_disk       = google_compute_instance.exemplar.boot_disk[0].device_name
   zone              = var.zone
   storage_locations = ["${var.region}"]
   depends_on        = [time_sleep.startup_completion]
-  labels = var.labels
-  
+  labels            = var.labels
 }
 
 # Create Disk Image for Instance Template
@@ -112,18 +111,18 @@ resource "google_compute_image" "exemplar" {
   project         = var.project_id
   name            = "${var.deployment_name}-latest"
   family          = var.deployment_name
-  source_snapshot = google_compute_snapshot.snapshot.self_link
-  depends_on      = [google_compute_snapshot.snapshot]
-  labels = var.labels
+  source_snapshot = google_compute_snapshot.main.self_link
+  depends_on      = [google_compute_snapshot.main]
+  labels          = var.labels
 }
 
 # Create Instance Template
-resource "google_compute_instance_template" "default" {
+resource "google_compute_instance_template" "main" {
   project     = var.project_id
   name        = "${var.deployment_name}-template"
   description = "This template is used to create app server instances."
   tags        = ["httpserver"]
-  labels = var.labels
+  labels      = var.labels
 
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
 
@@ -139,7 +138,7 @@ resource "google_compute_instance_template" "default" {
   }
 
   network_interface {
-    subnetwork         = module.vpc.subnets["us-central1/subnet-01"].self_link
+    subnetwork         = module.vpc.subnets["${var.region}/subnet-01"].self_link
     subnetwork_project = var.project_id
     access_config {
       // Ephemeral public IP
@@ -150,17 +149,15 @@ resource "google_compute_instance_template" "default" {
 }
 
 # Create Managed Instance Group
-resource "google_compute_instance_group_manager" "default" {
+resource "google_compute_instance_group_manager" "main" {
   project            = var.project_id
   name               = "${var.deployment_name}-mig"
   zone               = var.zone
   target_size        = var.nodes
   base_instance_name = "${var.deployment_name}-mig"
 
-
-
   version {
-    instance_template = google_compute_instance_template.default.id
+    instance_template = google_compute_instance_template.main.id
   }
 
   named_port {
@@ -168,10 +165,8 @@ resource "google_compute_instance_group_manager" "default" {
     port = "80"
   }
 
-  depends_on = [google_compute_instance_template.default]
+  depends_on = [google_compute_instance_template.main]
 }
-
-
 
 module "gce-lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
@@ -218,7 +213,7 @@ module "gce-lb-http" {
 
       groups = [
         {
-          group                        = google_compute_instance_group_manager.default.instance_group
+          group                        = google_compute_instance_group_manager.main.instance_group
           balancing_mode               = null
           capacity_scaler              = null
           description                  = null
