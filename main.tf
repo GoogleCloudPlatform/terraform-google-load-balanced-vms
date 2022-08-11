@@ -81,7 +81,7 @@ resource "google_compute_instance" "exemplar" {
   }
 
   network_interface {
-    subnetwork         = "subnet-01"
+    subnetwork         = module.vpc.subnets["${var.region}/subnet-01"].self_link
     subnetwork_project = var.project_id
     access_config {
       // Ephemeral public IP
@@ -126,7 +126,7 @@ resource "google_compute_instance_template" "main" {
 
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
 
-  instance_description = "BasicLB node"
+  instance_description = "${var.deployment_name} node"
   machine_type         = "n1-standard-1"
   can_ip_forward       = false
 
@@ -145,7 +145,6 @@ resource "google_compute_instance_template" "main" {
     }
   }
 
-  depends_on = [google_compute_image.exemplar]
 }
 
 # Create Managed Instance Group
@@ -165,7 +164,6 @@ resource "google_compute_instance_group_manager" "main" {
     port = "80"
   }
 
-  depends_on = [google_compute_instance_template.main]
 }
 
 module "gce-lb-http" {
