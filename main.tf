@@ -22,7 +22,7 @@ data "google_project" "project" {
 # Enabling services in your GCP project
 module "project-services" {
   source                      = "terraform-google-modules/project-factory/google//modules/project_services"
-  version                     = "13.0.0"
+  version                     = "~> 13.0"
   disable_services_on_destroy = false
 
   project_id  = var.project_id
@@ -170,7 +170,7 @@ resource "google_compute_instance_group_manager" "main" {
 
 module "gce-lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
-  version = "6.3.0"
+  version = "~> 6.3"
 
   project = var.project_id
   name    = "${var.deployment_name}-lb"
