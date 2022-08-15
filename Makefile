@@ -83,3 +83,4 @@ docker_generate_docs:
 # Alias for backwards compatibility
 .PHONY: generate_docs
 generate_docs: docker_generate_docs
+
