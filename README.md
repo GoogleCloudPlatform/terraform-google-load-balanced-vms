@@ -33,7 +33,9 @@ Functional examples are included in the
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| deployment\_name | The name of this particular deployment, will get added as a prefix to most resources. | `string` | n/a | yes |
+| deployment\_name | The name of this particular deployment, will get added as a prefix to most resources. | `string` | `"load-balanced-vms"` | no |
+| enable\_apis | Whether or not to enable underlying apis in this solution. . | `string` | `true` | no |
+| labels | A map of labels to apply to contained resources. | `map(string)` | <pre>{<br>  "load-balanced-vms": true<br>}</pre> | no |
 | nodes | The number of nodes in the manged instance group | `string` | n/a | yes |
 | project\_id | The project ID to deploy to | `string` | n/a | yes |
 | region | The Compute Region to deploy to | `string` | n/a | yes |
