@@ -24,8 +24,8 @@ module "project" {
   folder_id         = var.folder_id
   billing_account   = var.billing_account
   activate_apis = [
-    "serviceusage.googleapis.com", 
-    "compute.googleapis.com", 
+    "serviceusage.googleapis.com",
+    "compute.googleapis.com",
     "cloudresourcemanager.googleapis.com"
   ]
 }

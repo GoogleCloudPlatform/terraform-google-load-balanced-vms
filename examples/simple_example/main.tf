@@ -17,9 +17,9 @@
 module "load_balanced_vms" {
   source = "../.."
 
-  project_id  = var.project_id
-  region = "us-central1"
-  zone = "us-central1-a"
-  nodes = "3"
+  project_id      = var.project_id
+  region          = "us-central1"
+  zone            = "us-central1-a"
+  nodes           = "3"
   deployment_name = "load-balanced-vms"
 }

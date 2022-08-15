@@ -19,7 +19,7 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      # TODO: Check why this filter was breaking tests. 
+      # TODO: Check why this filter was breaking tests.
       # version = "~> 3.53, < 5.0"
     }
   }
