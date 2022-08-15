@@ -19,6 +19,7 @@ data "google_project" "project" {
   project_id = var.project_id
 }
 
+   
 # Enabling services in your GCP project
 module "project-services" {
   source                      = "terraform-google-modules/project-factory/google//modules/project_services"
