@@ -8,6 +8,13 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.1.1](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.1.0...v0.1.1) (2022-11-10)
+
+
+### Bug Fixes
+
+* adding labels to managed instances ([7ae1515](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/7ae15155eb23d49ba150814656d816dccc10e416))
+
 ## 0.1.0 (2022-08-11)
 
 
