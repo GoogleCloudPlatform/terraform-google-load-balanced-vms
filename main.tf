@@ -19,6 +19,10 @@ data "google_project" "project" {
   project_id = var.project_id
 }
 
+locals {
+  default_machine_type = "e2-medium"
+}
+
 # Enabling services in your GCP project
 module "project-services" {
   source                      = "terraform-google-modules/project-factory/google//modules/project_services"
@@ -62,7 +66,7 @@ data "local_file" "index" {
 # Create Instance Exemplar on which to base Managed VMs
 resource "google_compute_instance" "exemplar" {
   name         = "${var.deployment_name}-exemplar"
-  machine_type = "n1-standard-1"
+  machine_type = local.default_machine_type
   zone         = var.zone
   project      = var.project_id
   labels       = var.labels
@@ -127,7 +131,7 @@ resource "google_compute_instance_template" "main" {
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
 
   instance_description = "${var.deployment_name} node"
-  machine_type         = "n1-standard-1"
+  machine_type         = local.default_machine_type
   can_ip_forward       = false
 
   // Create a new boot disk from an image
@@ -150,6 +154,7 @@ resource "google_compute_instance_template" "main" {
 # Create Managed Instance Group
 resource "google_compute_instance_group_manager" "main" {
   project            = var.project_id
+  provider           = google-beta
   name               = "${var.deployment_name}-mig"
   zone               = var.zone
   target_size        = var.nodes
@@ -157,6 +162,10 @@ resource "google_compute_instance_group_manager" "main" {
 
   version {
     instance_template = google_compute_instance_template.main.id
+  }
+
+  all_instances_config {
+    labels = var.labels
   }
 
   named_port {
