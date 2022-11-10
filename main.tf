@@ -154,6 +154,7 @@ resource "google_compute_instance_template" "main" {
 # Create Managed Instance Group
 resource "google_compute_instance_group_manager" "main" {
   project            = var.project_id
+  provider           = google-beta
   name               = "${var.deployment_name}-mig"
   zone               = var.zone
   target_size        = var.nodes
@@ -161,6 +162,10 @@ resource "google_compute_instance_group_manager" "main" {
 
   version {
     instance_template = google_compute_instance_template.main.id
+  }
+
+  all_instances_config {
+    labels = var.labels
   }
 
   named_port {

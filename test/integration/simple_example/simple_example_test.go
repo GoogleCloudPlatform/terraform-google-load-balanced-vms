@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
@@ -25,6 +26,22 @@ import (
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
+
+func getInstanceName(projectID, zone string, t *testing.T) string {
+	gcloudListOps := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json", "--zones", zone})
+	cmdstr := fmt.Sprintf("compute instances list")
+	instanceList := gcloud.Run(t, cmdstr, gcloudListOps).Array()
+
+	for _, v := range instanceList {
+
+		name := v.Get("name").String()
+		if !strings.Contains(name, "exemplar") {
+			return name
+		}
+	}
+
+	return ""
+}
 
 func TestSimpleExample(t *testing.T) {
 	example := tft.NewTFBlueprintTest(t)
@@ -37,6 +54,8 @@ func TestSimpleExample(t *testing.T) {
 	example.DefineVerify(func(assert *assert.Assertions) {
 		example.DefaultVerify(assert)
 
+		instance := getInstanceName(projectID, zone, t)
+
 		labelTests := map[string]struct {
 			subsection string
 			name       string
@@ -47,6 +66,7 @@ func TestSimpleExample(t *testing.T) {
 			"Label: Instance Template": {subsection: "instance-templates", name: fmt.Sprintf("%s-template", prefix), query: "properties.labels.load-balanced-vms"},
 			"Label: Image":             {subsection: "images", name: fmt.Sprintf("%s-latest", prefix), query: "labels.load-balanced-vms"},
 			"Label: Snapshot":          {subsection: "snapshots", name: fmt.Sprintf("%s-snapshot", prefix), query: "labels.load-balanced-vms"},
+			"Label: MIG":               {subsection: "instances", name: instance, zone: true, query: "labels.load-balanced-vms"},
 		}
 
 		for name, tc := range labelTests {
