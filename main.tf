@@ -76,6 +76,7 @@ resource "google_compute_firewall" "private-allow-ssh" {
 
 data "local_file" "index" {
   filename = "${path.module}/files/index.html"
+
 }
 
 # Create Instance Exemplar on which to base Managed VMs
