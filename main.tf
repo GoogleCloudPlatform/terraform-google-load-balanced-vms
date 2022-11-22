@@ -61,7 +61,7 @@ module "vpc" {
 
 resource "google_compute_firewall" "private-allow-ssh" {
   name    = "${var.deployment_name}-allow-ssh"
-  project = data.google_project.project.number
+  project = var.project_id
   network = module.vpc.network_id
 
   allow {
