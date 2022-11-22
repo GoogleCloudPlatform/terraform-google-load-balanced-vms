@@ -59,6 +59,21 @@ module "vpc" {
 
 }
 
+resource "google_compute_firewall" "private-allow-ssh" {
+  name    = "${var.deployment_name}-allow-ssh"
+  project = data.google_project.project.number
+  network = module.vpc.network_id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+
+  target_tags = ["private-ssh"]
+}
+
 data "local_file" "index" {
   filename = "${path.module}/files/index.html"
 }
@@ -71,7 +86,7 @@ resource "google_compute_instance" "exemplar" {
   project      = var.project_id
   labels       = var.labels
 
-  tags                    = ["http-server"]
+  tags                    = ["http-server", "private-ssh"]
   metadata_startup_script = "apt-get update -y \n apt-get install nginx -y \n  printf '${data.local_file.index.content}'  | tee /var/www/html/index.html \n chgrp root /var/www/html/index.html \n chown root /var/www/html/index.html \n chmod +r /var/www/html/index.html"
 
   boot_disk {
@@ -125,7 +140,7 @@ resource "google_compute_instance_template" "main" {
   project     = var.project_id
   name        = "${var.deployment_name}-template"
   description = "This template is used to create app server instances."
-  tags        = ["httpserver"]
+  tags        = ["http-server", "private-ssh"]
   labels      = var.labels
 
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
