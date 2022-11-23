@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-
-data "google_project" "project" {
-  project_id = var.project_id
-}
-
 locals {
   default_machine_type = "e2-medium"
 }
@@ -105,7 +100,7 @@ resource "google_compute_snapshot" "main" {
   name              = "${var.deployment_name}-snapshot"
   source_disk       = google_compute_instance.exemplar.boot_disk[0].device_name
   zone              = var.zone
-  storage_locations = ["${var.region}"]
+  storage_locations = [var.region]
   depends_on        = [time_sleep.startup_completion]
   labels            = var.labels
 }
