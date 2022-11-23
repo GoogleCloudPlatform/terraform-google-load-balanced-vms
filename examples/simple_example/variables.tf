@@ -22,5 +22,5 @@ variable "project_id" {
 variable "deployment_name" {
   type        = string
   description = "Deployment name"
-  default     = "deployment_name"
+  default     = "load-balanced-vms"
 }
