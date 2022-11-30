@@ -15,9 +15,9 @@
  */
 
 
-data "google_project" "project" {
-  project_id = var.project_id
-}
+# data "google_project" "project" {
+#   project_id = var.project_id
+# }
 
 # Enabling services in your GCP project
 module "project-services" {
@@ -101,7 +101,7 @@ resource "google_compute_snapshot" "main" {
   name              = "${var.deployment_name}-snapshot"
   source_disk       = google_compute_instance.exemplar.boot_disk[0].device_name
   zone              = var.zone
-  storage_locations = ["${var.region}"]
+  storage_locations = [var.region]
   depends_on        = [time_sleep.startup_completion]
   labels            = var.labels
 }
