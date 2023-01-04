@@ -16,6 +16,7 @@
 
 locals {
   default_machine_type = "e2-medium"
+  subnet_name          = "${var.deployment_name}-subnet-01"
 }
 
 # Enabling services in your GCP project
@@ -42,7 +43,7 @@ module "vpc" {
 
   subnets = [
     {
-      subnet_name   = "subnet-01"
+      subnet_name   = local.subnet_name
       subnet_ip     = "10.10.10.0/24"
       subnet_region = var.region
     }
@@ -80,7 +81,7 @@ resource "google_compute_instance" "exemplar" {
   }
 
   network_interface {
-    subnetwork         = module.vpc.subnets["${var.region}/subnet-01"].self_link
+    subnetwork         = module.vpc.subnets["${var.region}/${local.subnet_name}"].self_link
     subnetwork_project = var.project_id
     access_config {
       // Ephemeral public IP
@@ -137,7 +138,7 @@ resource "google_compute_instance_template" "main" {
   }
 
   network_interface {
-    subnetwork         = module.vpc.subnets["${var.region}/subnet-01"].self_link
+    subnetwork         = module.vpc.subnets["${var.region}/${local.subnet_name}"].self_link
     subnetwork_project = var.project_id
     access_config {
       // Ephemeral public IP

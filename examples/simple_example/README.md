@@ -7,6 +7,7 @@ This example illustrates how to use the `load-balanced-vms` module.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| deployment\_name | Deployment name | `string` | `"deployment_name"` | no |
 | project\_id | The project ID to deploy to | `string` | n/a | yes |
 
 ## Outputs
