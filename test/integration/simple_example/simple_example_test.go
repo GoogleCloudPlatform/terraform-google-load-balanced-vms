@@ -17,9 +17,11 @@ package multiple_buckets
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
@@ -141,6 +143,37 @@ func TestSimpleExample(t *testing.T) {
 			val := net.ParseIP(ip)
 			assert.NotNil(val, "endpoint: expected (%s) to be valid IP", ip)
 		})
+
+		t.Run("Endpoint Test", func(t *testing.T) {
+			ip := example.GetStringOutput("endpoint")
+			urlToCall := fmt.Sprintf("http://%s", ip)
+
+			ok, err := httpPoll(urlToCall, "", 1, 360)
+			assert.Nil(err)
+			assert.True(ok)
+		})
 	})
 	example.Test()
 }
+
+func httpPoll(url, query string, interval, attempts int) (bool, error) {
+	urlToUse := strings.ReplaceAll(url, "\"", "")
+	urlToUse = strings.TrimSpace(urlToUse)
+	client := http.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	for i := 0; i < attempts; i++ {
+		resp, _ := client.Get(urlToUse)
+
+		if resp != nil && resp.StatusCode == http.StatusOK {
+			return true, nil
+		}
+		time.Sleep(time.Duration(interval) * time.Second)
+	}
+
+	return false, fmt.Errorf("%s debug: %s", ErrorURLFail, urlToUse)
+}
+
+// ErrorURLFail is thrown when a http poll fails
+var ErrorURLFail = fmt.Errorf("the url did not return 200 after time allotted")
