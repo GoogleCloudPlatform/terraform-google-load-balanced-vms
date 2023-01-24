@@ -155,9 +155,6 @@ resource "google_compute_instance_template" "main" {
   network_interface {
     subnetwork         = module.vpc.subnets["${var.region}/subnet-01"].self_link
     subnetwork_project = var.project_id
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
 }
