@@ -159,6 +159,13 @@ resource "google_compute_instance_template" "main" {
 
 }
 
+resource "google_compute_target_pool" "main" {
+  project = var.project_id
+  name    = "${var.deployment_name}-target-pool"
+  region  = var.region
+
+}
+
 # Create Managed Instance Group
 resource "google_compute_instance_group_manager" "main" {
   project            = var.project_id
@@ -167,6 +174,7 @@ resource "google_compute_instance_group_manager" "main" {
   zone               = var.zone
   target_size        = var.nodes
   base_instance_name = "${var.deployment_name}-mig"
+  target_pools       = [google_compute_target_pool.main.id]
 
   version {
     instance_template = google_compute_instance_template.main.id
@@ -182,6 +190,25 @@ resource "google_compute_instance_group_manager" "main" {
   }
 
 }
+
+resource "google_compute_autoscaler" "main" {
+  project = var.project_id
+  name    = "${var.deployment_name}-autoscaler"
+  zone    = var.zone
+  target  = google_compute_instance_group_manager.main.id
+
+  autoscaling_policy {
+    max_replicas    = var.nodes * 3
+    min_replicas    = var.nodes
+    cooldown_period = 60
+
+    cpu_utilization {
+      target = 0.5
+    }
+  }
+}
+
+
 
 module "gce-lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
