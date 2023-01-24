@@ -18,10 +18,12 @@
 output "load_balancer_endpoint" {
   value       = "http://${module.gce-lb-http.external_ip}/"
   description = "The url of the front end which we want to surface to the user"
+  type        = string
 }
 
 # Output loadbalancer details
 output "console_page_for_load_balancer" {
   value       = "https://console.cloud.google.com/net-services/loadbalancing/details/http/${var.deployment_name}-lb-url-map?project=${var.project_id}"
   description = "The url of the load balancer page in console"
+  type        = string
 }
