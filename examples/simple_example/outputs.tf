@@ -15,12 +15,12 @@
  */
 
 output "endpoint" {
-  value       = module.load_balanced_vms.endpoint
+  value       = module.load_balanced_vms.load_balancer_endpoint
   description = "The url of the front end which we want to surface to the user"
 }
 
 # Output loadbalancer details
 output "console_page" {
-  value       = module.load_balanced_vms.console_page
+  value       = module.load_balanced_vms.console_page_for_load_balancer
   description = "The url of the load balancer page in console"
 }
