@@ -26,12 +26,12 @@ variable "region" {
 
 variable "zone" {
   type        = string
-  description = "The Compute Zonbe to deploy to"
+  description = "The Compute Zone to deploy to"
 }
 
 variable "nodes" {
   type        = string
-  description = "The number of nodes in the manged instance group"
+  description = "The number of nodes in the managed instance group"
 }
 
 variable "deployment_name" {

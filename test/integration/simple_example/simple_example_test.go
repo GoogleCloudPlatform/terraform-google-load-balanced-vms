@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package multiple_buckets
+package simple_example
 
 import (
 	"fmt"
