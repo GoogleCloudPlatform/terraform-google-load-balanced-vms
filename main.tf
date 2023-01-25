@@ -163,7 +163,20 @@ resource "google_compute_target_pool" "main" {
   project = var.project_id
   name    = "${var.deployment_name}-target-pool"
   region  = var.region
+}
 
+resource "google_compute_health_check" "autohealing" {
+  project             = var.project_id
+  name                = "${var.deployment_name}-autohealing-health-check"
+  check_interval_sec  = 5
+  timeout_sec         = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 10 # 50 seconds
+
+  http_health_check {
+    request_path = "/"
+    port         = "80"
+  }
 }
 
 # Create Managed Instance Group
@@ -189,6 +202,11 @@ resource "google_compute_instance_group_manager" "main" {
     port = "80"
   }
 
+  auto_healing_policies {
+    health_check      = google_compute_health_check.autohealing.id
+    initial_delay_sec = 300
+  }
+
 }
 
 resource "google_compute_autoscaler" "main" {
@@ -207,8 +225,6 @@ resource "google_compute_autoscaler" "main" {
     }
   }
 }
-
-
 
 module "gce-lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
