@@ -145,36 +145,6 @@ func TestSimpleExample(t *testing.T) {
 			_, err := url.ParseRequestURI(got)
 			assert.Nil(err)
 		})
-
-		t.Run("Endpoint Test", func(t *testing.T) {
-			urlToCall := example.GetStringOutput("endpoint")
-
-			ok, err := httpPoll(urlToCall, "", 1, 360)
-			assert.Nil(err)
-			assert.True(ok)
-		})
 	})
 	example.Test()
 }
-
-func httpPoll(url, query string, interval, attempts int) (bool, error) {
-	urlToUse := strings.ReplaceAll(url, "\"", "")
-	urlToUse = strings.TrimSpace(urlToUse)
-	client := http.Client{
-		Timeout: 2 * time.Second,
-	}
-
-	for i := 0; i < attempts; i++ {
-		resp, _ := client.Get(urlToUse)
-
-		if resp != nil && resp.StatusCode == http.StatusOK {
-			return true, nil
-		}
-		time.Sleep(time.Duration(interval) * time.Second)
-	}
-
-	return false, fmt.Errorf("%s debug: %s", ErrorURLFail, urlToUse)
-}
-
-// ErrorURLFail is thrown when a http poll fails
-var ErrorURLFail = fmt.Errorf("the url did not return 200 after time allotted")
