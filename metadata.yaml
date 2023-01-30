@@ -1,4 +1,4 @@
-# Copyright 2022 Google LLC
+# Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,14 +19,25 @@ metadata:
   annotations:
     config.kubernetes.io/local-config: "true"
 spec:
-  title: terraform-google-load-balanced-vms
+  title: Load balanced managed VMs
   source:
     repo: https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms.git
     sourceType: git
-  version: 0.1.0
+  version: 0.1.1
   actuationTool:
     type: Terraform
     version: '>= 0.13'
+  description:
+    tagline: Create a Managed Instance Group exposed by a HTTP Load Balancer.
+    detailed: |-
+      Create a virtual machine cluster with a load balancer to make the VMs globally available, and instantaneously manage traffic.
+      You can choose whether to deploy your solution through the console directly or download as Terraform on GitHub  to deploy later.
+    architecture: |-
+      1- The user makes a request to the application deployed on Compute Engine and the request first lands on Cloud Load Balancing.
+      2- Cloud Load Balancing distributes the traffic to the Compute Engine Managed Instance Group (MIG) which is set up to scale to multiple instances based on traffic growth.
+  documentation:
+  - title: Architecture Diagram
+    url: https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/blob/main/assets/load_balanced_vms_v1.svg
   examples:
   - name: simple_example
     location: examples/simple_example
@@ -48,7 +59,7 @@ spec:
       load-balanced-vms: true
     required: false
   - name: nodes
-    description: The number of nodes in the manged instance group
+    description: The number of nodes in the managed instance group
     type: string
     required: true
   - name: project_id
@@ -60,7 +71,7 @@ spec:
     type: string
     required: true
   - name: zone
-    description: The Compute Zonbe to deploy to
+    description: The Compute Zone to deploy to
     type: string
     required: true
   outputs:
