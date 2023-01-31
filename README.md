@@ -1,4 +1,4 @@
-# terraform-google-load-balanced-vms
+# Load balanced managed VMs
 
 This module was generated from [terraform-google-module-template](https://github.com/terraform-google-modules/terraform-google-module-template/), which by default generates a module that simply creates a GCS bucket. As the module develops, this README should be updated.
 
@@ -7,6 +7,20 @@ The resources/services/activations/deletions that this module will create/trigge
 * Instance Template
 * Managed Instance Group
 * Load Balancer
+
+### Tagline
+Create a Managed Instance Group exposed by a HTTP Load Balancer.
+
+### Detailed
+Create a virtual machine cluster with a load balancer to make the VMs globally available, and instantaneously manage traffic.
+You can choose whether to deploy your solution through the console directly or download as Terraform on GitHub  to deploy later.
+
+### Architecture
+1. The user makes a request to the application deployed on Compute Engine and the request first lands on Cloud Load Balancing.
+1. Cloud Load Balancing distributes the traffic to the Compute Engine Managed Instance Group (MIG) which is set up to scale to multiple instances based on traffic growth.
+
+## Documentation
+- [Architecture Diagram](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/blob/main/assets/load_balanced_vms_v1.svg)
 
 ## Usage
 
