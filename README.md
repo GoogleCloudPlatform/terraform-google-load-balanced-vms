@@ -16,8 +16,8 @@ Create a virtual machine cluster with a load balancer to make the VMs globally a
 You can choose whether to deploy your solution through the console directly or download as Terraform on GitHub  to deploy later.
 
 ### Architecture
-1- The user makes a request to the application deployed on Compute Engine and the request first lands on Cloud Load Balancing.
-2- Cloud Load Balancing distributes the traffic to the Compute Engine Managed Instance Group (MIG) which is set up to scale to multiple instances based on traffic growth.
+1. The user makes a request to the application deployed on Compute Engine and the request first lands on Cloud Load Balancing.
+1. Cloud Load Balancing distributes the traffic to the Compute Engine Managed Instance Group (MIG) which is set up to scale to multiple instances based on traffic growth.
 
 ## Documentation
 - [Architecture Diagram](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/blob/main/assets/load_balanced_vms_v1.svg)
