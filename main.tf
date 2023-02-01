@@ -17,6 +17,10 @@
 locals {
   default_machine_type = "e2-medium"
   subnet_name          = "${var.deployment_name}-subnet-01"
+  custom_network       = var.network_id != ""
+  network_id           = local.custom_network ? var.network_id : module.vpc[0].network_id
+  subnet_self_link     = var.subnet_self_link != "" ? var.subnet_self_link : module.vpc[0].subnets["${var.region}/${local.subnet_name}"].self_link
+  network_project_id   = var.network_project_id != "" ? var.network_project_id : var.project_id
 }
 
 # Enabling services in your GCP project
@@ -34,6 +38,7 @@ module "project-services" {
 }
 
 module "vpc" {
+  count   = local.custom_network ? 0 : 1
   source  = "terraform-google-modules/network/google"
   version = "~> 4.0"
 
@@ -57,8 +62,8 @@ module "vpc" {
 
 resource "google_compute_firewall" "private-allow-ssh" {
   name    = "${var.deployment_name}-allow-ssh"
-  project = var.project_id
-  network = module.vpc.network_id
+  project = local.network_project_id
+  network = local.network_id
 
   allow {
     protocol = "tcp"
@@ -97,11 +102,9 @@ resource "google_compute_instance" "exemplar" {
   }
 
   network_interface {
-    subnetwork         = module.vpc.subnets["${var.region}/${local.subnet_name}"].self_link
-    subnetwork_project = var.project_id
+    subnetwork         = local.subnet_self_link
+    subnetwork_project = local.network_project_id
   }
-
-  depends_on = [module.vpc]
 }
 
 resource "time_sleep" "startup_completion" {
@@ -151,8 +154,8 @@ resource "google_compute_instance_template" "main" {
   }
 
   network_interface {
-    subnetwork         = module.vpc.subnets["${var.region}/${local.subnet_name}"].self_link
-    subnetwork_project = var.project_id
+    subnetwork         = local.subnet_self_link
+    subnetwork_project = local.network_project_id
   }
 
 }
@@ -231,7 +234,7 @@ module "gce-lb-http" {
   project = var.project_id
   name    = "${var.deployment_name}-lb"
 
-  firewall_networks = [module.vpc.network_name]
+  firewall_networks = [local.network_id]
 
   backends = {
     default = {

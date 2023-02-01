@@ -51,3 +51,21 @@ variable "enable_apis" {
   description = "Whether or not to enable underlying apis in this solution. ."
   default     = true
 }
+
+variable "network_id" {
+  type        = string
+  description = "VPC network to deploy VMs in. A VPC will be created if not specified."
+  default     = ""
+}
+
+variable "subnet_self_link" {
+  type        = string
+  description = "Subnetwork to deploy VMs in. A Subnetwork will be created if not specified."
+  default     = ""
+}
+
+variable "network_project_id" {
+  type        = string
+  description = "Shared VPC host project ID if a Shared VPC is provided via network_id."
+  default     = ""
+}
