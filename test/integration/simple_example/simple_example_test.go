@@ -16,7 +16,7 @@ package simple_example
 
 import (
 	"fmt"
-	"net"
+	"net/url"
 	"strconv"
 	"strings"
 	"testing"
@@ -132,14 +132,16 @@ func TestSimpleExample(t *testing.T) {
 			assert.Equal("ENABLED", match.Get("state").String(), "compute service should be enabled")
 		})
 
-		t.Run("Outputs Value", func(t *testing.T) {
+		t.Run("Output - console page", func(t *testing.T) {
 			got := example.GetStringOutput("console_page")
-			expected := fmt.Sprintf("/net-services/loadbalancing/details/http/%s-lb-url-map?project=%s", prefix, projectID)
+			expected := fmt.Sprintf("https://console.cloud.google.com/net-services/loadbalancing/details/http/%s-lb-url-map?project=%s", prefix, projectID)
 			assert.Equal(expected, got, "console page: expected (%s) got (%s)", expected, got)
+		})
 
-			ip := example.GetStringOutput("endpoint")
-			val := net.ParseIP(ip)
-			assert.NotNil(val, "endpoint: expected (%s) to be valid IP", ip)
+		t.Run("Outputs - endpoint", func(t *testing.T) {
+			got := example.GetStringOutput("endpoint")
+			_, err := url.ParseRequestURI(got)
+			assert.Nil(err)
 		})
 	})
 	example.Test()

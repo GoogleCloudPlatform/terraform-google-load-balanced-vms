@@ -55,8 +55,24 @@ module "vpc" {
 
 }
 
+resource "google_compute_firewall" "private-allow-ssh" {
+  name    = "${var.deployment_name}-allow-ssh"
+  project = var.project_id
+  network = module.vpc.network_id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+
+  target_tags = ["private-ssh"]
+}
+
 data "local_file" "index" {
   filename = "${path.module}/files/index.html"
+
 }
 
 # Create Instance Exemplar on which to base Managed VMs
@@ -67,7 +83,7 @@ resource "google_compute_instance" "exemplar" {
   project      = var.project_id
   labels       = var.labels
 
-  tags                    = ["http-server"]
+  tags                    = ["http-server", "private-ssh"]
   metadata_startup_script = "apt-get update -y \n apt-get install nginx -y \n  printf '${data.local_file.index.content}'  | tee /var/www/html/index.html \n chgrp root /var/www/html/index.html \n chown root /var/www/html/index.html \n chmod +r /var/www/html/index.html"
 
   boot_disk {
@@ -83,9 +99,6 @@ resource "google_compute_instance" "exemplar" {
   network_interface {
     subnetwork         = module.vpc.subnets["${var.region}/${local.subnet_name}"].self_link
     subnetwork_project = var.project_id
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
   depends_on = [module.vpc]
@@ -121,7 +134,7 @@ resource "google_compute_instance_template" "main" {
   project     = var.project_id
   name        = "${var.deployment_name}-template"
   description = "This template is used to create app server instances."
-  tags        = ["httpserver"]
+  tags        = ["http-server", "private-ssh"]
   labels      = var.labels
 
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
@@ -140,11 +153,28 @@ resource "google_compute_instance_template" "main" {
   network_interface {
     subnetwork         = module.vpc.subnets["${var.region}/${local.subnet_name}"].self_link
     subnetwork_project = var.project_id
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
+}
+
+resource "google_compute_target_pool" "main" {
+  project = var.project_id
+  name    = "${var.deployment_name}-target-pool"
+  region  = var.region
+}
+
+resource "google_compute_health_check" "autohealing" {
+  project             = var.project_id
+  name                = "${var.deployment_name}-autohealing-health-check"
+  check_interval_sec  = 5
+  timeout_sec         = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 10 # 50 seconds
+
+  http_health_check {
+    request_path = "/"
+    port         = "80"
+  }
 }
 
 # Create Managed Instance Group
@@ -155,6 +185,7 @@ resource "google_compute_instance_group_manager" "main" {
   zone               = var.zone
   target_size        = var.nodes
   base_instance_name = "${var.deployment_name}-mig"
+  target_pools       = [google_compute_target_pool.main.id]
 
   version {
     instance_template = google_compute_instance_template.main.id
@@ -169,6 +200,28 @@ resource "google_compute_instance_group_manager" "main" {
     port = "80"
   }
 
+  auto_healing_policies {
+    health_check      = google_compute_health_check.autohealing.id
+    initial_delay_sec = 300
+  }
+
+}
+
+resource "google_compute_autoscaler" "main" {
+  project = var.project_id
+  name    = "${var.deployment_name}-autoscaler"
+  zone    = var.zone
+  target  = google_compute_instance_group_manager.main.id
+
+  autoscaling_policy {
+    max_replicas    = var.nodes * 3
+    min_replicas    = var.nodes
+    cooldown_period = 60
+
+    cpu_utilization {
+      target = 0.5
+    }
+  }
 }
 
 module "gce-lb-http" {
