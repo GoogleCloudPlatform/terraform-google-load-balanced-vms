@@ -50,9 +50,12 @@ Functional examples are included in the
 | deployment\_name | The name of this particular deployment, will get added as a prefix to most resources. | `string` | `"load-balanced-vms"` | no |
 | enable\_apis | Whether or not to enable underlying apis in this solution. . | `string` | `true` | no |
 | labels | A map of labels to apply to contained resources. | `map(string)` | <pre>{<br>  "load-balanced-vms": true<br>}</pre> | no |
+| network\_id | VPC network to deploy VMs in. A VPC will be created if not specified. | `string` | `""` | no |
+| network\_project\_id | Shared VPC host project ID if a Shared VPC is provided via network\_id. | `string` | `""` | no |
 | nodes | The number of nodes in the managed instance group | `string` | n/a | yes |
 | project\_id | The project ID to deploy to | `string` | n/a | yes |
 | region | The Compute Region to deploy to | `string` | n/a | yes |
+| subnet\_self\_link | Subnetwork to deploy VMs in. A Subnetwork will be created if not specified. | `string` | `""` | no |
 | zone | The Compute Zone to deploy to | `string` | n/a | yes |
 
 ## Outputs
