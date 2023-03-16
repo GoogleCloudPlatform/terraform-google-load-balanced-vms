@@ -104,6 +104,9 @@ resource "google_compute_instance" "exemplar" {
   network_interface {
     subnetwork         = local.subnet_self_link
     subnetwork_project = local.network_project_id
+    access_config {
+      // Ephemeral public IP
+    }
   }
 }
 
