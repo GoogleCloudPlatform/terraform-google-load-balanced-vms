@@ -132,17 +132,18 @@ func TestSimpleExample(t *testing.T) {
 			assert.Equal("ENABLED", match.Get("state").String(), "compute service should be enabled")
 		})
 
-		t.Run("Output - console page", func(t *testing.T) {
-			got := example.GetStringOutput("console_page")
+		t.Run("Output - console_page_for_load_balancer", func(t *testing.T) {
+			got := example.GetStringOutput("console_page_for_load_balancer")
 			expected := fmt.Sprintf("https://console.cloud.google.com/net-services/loadbalancing/details/http/%s-lb-url-map?project=%s", prefix, projectID)
 			assert.Equal(expected, got, "console page: expected (%s) got (%s)", expected, got)
 		})
 
-		t.Run("Outputs - endpoint", func(t *testing.T) {
-			got := example.GetStringOutput("endpoint")
+		t.Run("Outputs - load_balancer_endpoint", func(t *testing.T) {
+			got := example.GetStringOutput("load_balancer_endpoint")
 			_, err := url.ParseRequestURI(got)
 			assert.Nil(err)
 		})
+
 	})
 	example.Test()
 }
