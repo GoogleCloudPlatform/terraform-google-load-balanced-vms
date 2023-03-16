@@ -49,3 +49,4 @@ credentials.json
 cft.json
 clean
 temp.vars
+.vscode/settings.json

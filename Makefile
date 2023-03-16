@@ -83,3 +83,14 @@ docker_generate_docs:
 # Alias for backwards compatibility
 .PHONY: generate_docs
 generate_docs: docker_generate_docs
+
+# Remove all terraform files so this project can start from a clean state
+.PHONY: clean_terraform
+clean_terraform:
+	cd test/setup && rm -rf .terraform*
+	cd test/setup && rm -rf terraform.tfstate
+	cd test/integration/simple_example && rm -rf tmp
+
+# These both need to be done before publishing
+.PHONY: before_publish
+before_publish: generate_docs docker_test_lint
