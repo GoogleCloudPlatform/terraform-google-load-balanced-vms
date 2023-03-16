@@ -1,0 +1,22 @@
+title: Load Balanced VMs
+name: terraform-google-load-balanced-vms
+collect_project: true
+collect_region: true
+region_type: compute
+region_default: us-central1
+collect_zone: true
+custom_settings:
+- name: nodes
+  description: Please select the minimum number of nodes in your cluster
+  default: "3"
+path_terraform: .
+duration: 10
+products:
+- product: Compute Engine
+  info: A Cluster of VMs
+- product: Load Balancing
+  info: A public endpoint shared by the cluster
+description: |
+  This solution deploys a group of VMs managed by a load balancer. The VMs serve
+  a static website.  It also utilizes Auto Scaling and Auto healing to respond to
+  demand and to make cluster more resilient. 
