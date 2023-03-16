@@ -8,6 +8,13 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.1.3](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.1.2...v0.1.3) (2023-03-16)
+
+
+### Bug Fixes
+
+* altered exemplar to prevent whole solution from failing.  ([#32](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/32)) ([9a92168](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/9a92168cac7bc7c6be5f34f048dae381d80391c5))
+
 ## [0.1.2](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.1.1...v0.1.2) (2023-02-01)
 
 
