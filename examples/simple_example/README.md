@@ -14,8 +14,8 @@ This example illustrates how to use the `load-balanced-vms` module.
 
 | Name | Description |
 |------|-------------|
-| console\_page | The url of the load balancer page in console |
-| endpoint | The url of the front end which we want to surface to the user |
+| console\_page\_for\_load\_balancer | The url of the load balancer page in console |
+| load\_balancer\_endpoint | The url of the front end which we want to surface to the user |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

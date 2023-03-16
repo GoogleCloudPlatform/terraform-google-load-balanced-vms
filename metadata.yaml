@@ -75,9 +75,9 @@ spec:
     type: string
     required: true
   outputs:
-  - name: console_page
+  - name: console_page_for_load_balancer
     description: The url of the load balancer page in console
-  - name: endpoint
+  - name: load_balancer_endpoint
     description: The url of the front end which we want to surface to the user
   roles:
   - level: Project
