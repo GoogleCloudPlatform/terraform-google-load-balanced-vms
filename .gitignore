@@ -50,3 +50,5 @@ cft.json
 clean
 temp.vars
 .vscode/settings.json
+debug.log
+tfdebug.log
