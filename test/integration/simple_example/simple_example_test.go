@@ -144,6 +144,21 @@ func TestSimpleExample(t *testing.T) {
 			assert.Nil(err)
 		})
 
+		t.Run("Test healthchecks", func(t *testing.T) {
+			backendname := fmt.Sprintf("%s-lb-backend-default", prefix)
+			gcommmand := fmt.Sprintf("compute backend-services get-health %s", backendname)
+			healthchecks := gcloud.Run(t, gcommmand, gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json", "--global"})).Array()
+
+			found := false
+			for _, v := range healthchecks {
+				if strings.Contains(v.String(), "\"healthState\": \"HEALTHY\"") {
+					found = true
+				}
+			}
+
+			assert.True(found, "should have found a 'HEALTHY' in the health check status", healthchecks)
+		})
+
 	})
 	example.Test()
 }
