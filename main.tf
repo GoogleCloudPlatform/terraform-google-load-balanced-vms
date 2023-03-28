@@ -89,7 +89,14 @@ resource "google_compute_instance" "exemplar" {
   labels       = var.labels
 
   tags                    = ["http-server", "private-ssh"]
-  metadata_startup_script = "apt-get update -y \n apt-get install nginx -y \n  printf '${data.local_file.index.content}'  | tee /var/www/html/index.html \n chgrp root /var/www/html/index.html \n chown root /var/www/html/index.html \n chmod +r /var/www/html/index.html"
+  metadata_startup_script = <<EOF
+apt-get update -y 
+apt-get install nginx -y 
+printf '${data.local_file.index.content}'  | tee /var/www/html/index.html 
+chgrp root /var/www/html/index.html 
+chown root /var/www/html/index.html 
+chmod +r /var/www/html/index.html"
+  EOF
 
   boot_disk {
     auto_delete = true
