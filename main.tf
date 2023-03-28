@@ -97,6 +97,8 @@ printf '${data.local_file.index.content}'  | tee /var/www/html/index.html
 chgrp root /var/www/html/index.html 
 chown root /var/www/html/index.html 
 chmod +r /var/www/html/index.html
+sleep 300
+shutdown -h now
   EOF
 
   boot_disk {
