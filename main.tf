@@ -15,12 +15,13 @@
  */
 
 locals {
-  default_machine_type = "e2-medium"
-  subnet_name          = "${var.deployment_name}-subnet-01"
-  custom_network       = var.network_id != ""
-  network_id           = local.custom_network ? var.network_id : module.vpc[0].network_id
-  subnet_self_link     = var.subnet_self_link != "" ? var.subnet_self_link : module.vpc[0].subnets["${var.region}/${local.subnet_name}"].self_link
-  network_project_id   = var.network_project_id != "" ? var.network_project_id : var.project_id
+  exemplar_machine_type = "e2-medium"
+  node_machine_type     = "e2-micro"
+  subnet_name           = "${var.deployment_name}-subnet-01"
+  custom_network        = var.network_id != ""
+  network_id            = local.custom_network ? var.network_id : module.vpc[0].network_id
+  subnet_self_link      = var.subnet_self_link != "" ? var.subnet_self_link : module.vpc[0].subnets["${var.region}/${local.subnet_name}"].self_link
+  network_project_id    = var.network_project_id != "" ? var.network_project_id : var.project_id
 }
 
 # Enabling services in your GCP project
@@ -83,7 +84,7 @@ data "local_file" "index" {
 # Create Instance Exemplar on which to base Managed VMs
 resource "google_compute_instance" "exemplar" {
   name         = "${var.deployment_name}-exemplar"
-  machine_type = local.default_machine_type
+  machine_type = local.exemplar_machine_type
   zone         = var.zone
   project      = var.project_id
   labels       = var.labels
@@ -95,7 +96,7 @@ apt-get install nginx -y
 printf '${data.local_file.index.content}'  | tee /var/www/html/index.html 
 chgrp root /var/www/html/index.html 
 chown root /var/www/html/index.html 
-chmod +r /var/www/html/index.html"
+chmod +r /var/www/html/index.html
   EOF
 
   boot_disk {
@@ -153,7 +154,7 @@ resource "google_compute_instance_template" "main" {
   metadata_startup_script = "sed -i.bak \"s/{{NODENAME}}/$HOSTNAME/\" /var/www/html/index.html"
 
   instance_description = "${var.deployment_name} node"
-  machine_type         = local.default_machine_type
+  machine_type         = local.node_machine_type
   can_ip_forward       = false
 
   // Create a new boot disk from an image
