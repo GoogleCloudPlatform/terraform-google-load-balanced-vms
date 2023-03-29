@@ -39,6 +39,14 @@ module "load_balanced_vms" {
 }
 ```
 
+## Open in Cloud Shell
+An other way of using this Terraform solution is with DeployStack, which will
+ask for setting options in Cloud Shell.  
+
+<a href="https://shell.cloud.google.com/cloudshell/editor?show=terminal&cloudshell_git_repo=https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms&cloudshell_image=gcr.io%2Fds-artifacts-cloudshell%2Fdeploystack_custom_image" target="_new">
+    <img alt="Open in Cloud Shell" src="https://gstatic.com/cloudssh/images/open-btn.svg">
+</a>
+
 Functional examples are included in the
 [examples](./examples/) directory.
 
