@@ -1,3 +1,4 @@
 This solution deploys a group of VMs managed by a load balancer. The VMs serve
 a static website.  It also utilizes Auto Scaling and Auto healing to respond to
-demand and to make cluster more resilient. 
+demand and to make cluster more resilient.
+
