@@ -91,15 +91,15 @@ resource "google_compute_instance" "exemplar" {
 
   tags                    = ["http-server", "private-ssh"]
   metadata_startup_script = <<EOF
-apt-get update -y 
-apt-get install nginx -y 
-printf '${data.local_file.index.content}'  | tee /var/www/html/index.html 
-chgrp root /var/www/html/index.html 
-chown root /var/www/html/index.html 
+apt-get update -y
+apt-get install nginx -y
+printf '${data.local_file.index.content}'  | tee /var/www/html/index.html
+chgrp root /var/www/html/index.html
+chown root /var/www/html/index.html
 chmod +r /var/www/html/index.html
 sleep 300
 shutdown -h now
-  EOF
+EOF
 
   boot_disk {
     auto_delete = true
