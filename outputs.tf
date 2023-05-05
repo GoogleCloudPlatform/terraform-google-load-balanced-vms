@@ -20,6 +20,11 @@ output "load_balancer_endpoint" {
   description = "The url of the front end which we want to surface to the user"
 }
 
+output "neos_tutorial_url" {
+  value       = "https://console.cloud.google.com/products/solutions/catalog?walkthrough_id=solutions-in-console--load-balanced-vms--tour&project=${var.project_id}"
+  description = "The URL to launch the in-console tutorial for the Load balanced managed VMs solution"
+} 
+   
 # Output loadbalancer details
 output "console_page_for_load_balancer" {
   value       = "https://console.cloud.google.com/net-services/loadbalancing/details/http/${var.deployment_name}-lb-url-map?project=${var.project_id}"
