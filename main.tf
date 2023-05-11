@@ -22,6 +22,7 @@ locals {
   network_id            = local.custom_network ? var.network_id : module.vpc[0].network_id
   subnet_self_link      = var.subnet_self_link != "" ? var.subnet_self_link : module.vpc[0].subnets["${var.region}/${local.subnet_name}"].self_link
   network_project_id    = var.network_project_id != "" ? var.network_project_id : var.project_id
+  lb_endpoint           = "http://${module.gce-lb-http.external_ip}/"
 }
 
 # Enabling services in your GCP project
@@ -306,4 +307,15 @@ module "gce-lb-http" {
       }
     }
   }
+}
+
+data "http" "check" {
+  url = local.lb_endpoint
+  retry {
+    attempts     = 50
+    max_delay_ms = 10 * 1000
+    min_delay_ms = 5 * 1000
+  }
+
+  depends_on = [module.gce-lb-http]
 }

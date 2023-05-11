@@ -16,8 +16,13 @@
 
 # Waiting for website to be serving http
 output "load_balancer_endpoint" {
-  value       = "http://${module.gce-lb-http.external_ip}/"
+  value       = local.lb_endpoint
   description = "The url of the front end which we want to surface to the user"
+
+  precondition {
+    condition     = data.http.check.status_code != "200"
+    error_message = "LB is not serving yet"
+  }
 }
 
 # Output loadbalancer details
