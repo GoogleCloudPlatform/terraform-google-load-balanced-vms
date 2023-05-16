@@ -70,8 +70,9 @@ Functional examples are included in the
 
 | Name | Description |
 |------|-------------|
-| console\_page\_for\_load\_balancer | The url of the load balancer page in console |
 | load\_balancer\_endpoint | The url of the front end which we want to surface to the user |
+| neos\_tutorial\_url | The url of the in-console tour |
+| console\_page\_for\_load\_balancer | The url of the load balancer page in console |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
