@@ -231,7 +231,7 @@ resource "google_compute_autoscaler" "main" {
   target  = google_compute_instance_group_manager.main.id
 
   autoscaling_policy {
-    max_replicas    = var.nodes * 3
+    max_replicas    = var.nodes * 2
     min_replicas    = var.nodes
     cooldown_period = 60
 
