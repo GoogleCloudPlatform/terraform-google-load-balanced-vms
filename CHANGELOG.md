@@ -8,6 +8,19 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.2.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.1.4...v0.2.0) (2023-05-18)
+
+
+### Features
+
+* add link to in-console tour of solution ([#38](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/38)) ([e25a977](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/e25a977d24fbf9fb343e1fd62d746a5d57a196ef))
+* wait for lb to start serving ([#40](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/40)) ([33b0cfc](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/33b0cfcb1a5f7847d3b1283395888f9d636be131))
+
+
+### Bug Fixes
+
+* updating node count max to allow for bigger audience. ([#43](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/43)) ([42f9a2a](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/42f9a2a0c0c2a4e122a360e67b4fb6a8b32272c5))
+
 ## [0.1.4](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.1.3...v0.1.4) (2023-03-29)
 
 
