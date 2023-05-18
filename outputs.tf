@@ -16,8 +16,18 @@
 
 # Waiting for website to be serving http
 output "load_balancer_endpoint" {
-  value       = "http://${module.gce-lb-http.external_ip}/"
+  value       = local.lb_endpoint
   description = "The url of the front end which we want to surface to the user"
+
+  precondition {
+    condition     = data.http.check.status_code != "200"
+    error_message = "LB is not serving yet"
+  }
+}
+
+output "neos_tutorial_url" {
+  value       = "https://console.cloud.google.com/products/solutions/catalog?walkthrough_id=solutions-in-console--load-balanced-vms--tour&project=${var.project_id}"
+  description = "The URL to launch the in-console tutorial for the Load balanced managed VMs solution"
 }
 
 # Output loadbalancer details
