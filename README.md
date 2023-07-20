@@ -29,7 +29,7 @@ Basic usage of this module is as follows:
 ```hcl
 module "load_balanced_vms" {
   source  = "terraform-google-modules/load-balanced-vms/google"
-  version = "~> 0.2"
+  version = "~> 0.3"
 
   project_id  = "<PROJECT ID>"
   region = "us-central1"
