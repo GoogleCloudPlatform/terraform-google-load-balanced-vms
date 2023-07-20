@@ -8,6 +8,20 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.3.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.2.0...v0.3.0) (2023-07-20)
+
+
+### Features
+
+* adds metadata autogen and validation ([#42](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/42)) ([6db3bcf](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/6db3bcfcfa84b8b2231d1db4c34923f1d5e8798c))
+
+
+### Bug Fixes
+
+* **deps:** update cft/developer-tools docker tag to v1.13 ([#49](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/49)) ([c480378](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/c4803783bb225bd620677f2e384c4ee1fe92c893))
+* **deps:** update tf modules ([#28](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/28)) ([6bdf211](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/6bdf211da6febb394ecf21c164fc6636dbc3bba7))
+* Update int.cloudbuild.yaml to use LR billing ([#50](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/50)) ([4ad4337](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/4ad4337cb8ad903fbe64b6b46d0aee528c1ec00a))
+
 ## [0.2.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.1.4...v0.2.0) (2023-05-18)
 
 
