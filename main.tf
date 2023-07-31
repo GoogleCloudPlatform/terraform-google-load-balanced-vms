@@ -28,7 +28,7 @@ locals {
 # Enabling services in your GCP project
 module "project-services" {
   source                      = "terraform-google-modules/project-factory/google//modules/project_services"
-  version                     = "~> 14.0"
+  version                     = "~> 13.0"
   disable_services_on_destroy = false
 
   project_id  = var.project_id
@@ -42,7 +42,7 @@ module "project-services" {
 module "vpc" {
   count   = local.custom_network ? 0 : 1
   source  = "terraform-google-modules/network/google"
-  version = "~> 7.0"
+  version = "~> 4.0"
 
   project_id   = var.project_id
   network_name = "${var.deployment_name}-network"
@@ -243,7 +243,7 @@ resource "google_compute_autoscaler" "main" {
 
 module "gce-lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
-  version = "~> 9.0"
+  version = "~> 6.3"
 
   project = var.project_id
   name    = "${var.deployment_name}-lb"
