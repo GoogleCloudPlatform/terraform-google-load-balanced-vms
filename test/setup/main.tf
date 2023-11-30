@@ -16,7 +16,7 @@
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 11.0"
+  version = "~> 14.0"
 
   name              = "load-balanced-vms"
   random_project_id = "true"
