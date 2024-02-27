@@ -21,7 +21,7 @@ module "load_balanced_vms" {
   project_id = var.project_id
   region     = "us-central1"
   zone       = "us-central1-a"
-  nodes      = "3"
+  nodes      = "2"
   // param for testing multiple deployments in a single project
   deployment_name = var.deployment_name
 }
