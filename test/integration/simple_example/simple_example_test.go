@@ -48,7 +48,7 @@ func TestSimpleExample(t *testing.T) {
 
 	projectID := example.GetTFSetupStringOutput("project_id")
 	prefix := "load-balanced-vms"
-	nodes := "3"
+	nodes := "2"
 	zone := "us-central1-a"
 
 	example.DefineVerify(func(assert *assert.Assertions) {
