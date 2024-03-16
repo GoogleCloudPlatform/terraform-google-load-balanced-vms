@@ -5,7 +5,7 @@
   <meta name="short_id" content="true" />
 </walkthrough-metadata>
 
-# Customize an Load balanced managed VMs Solution
+# Customize a Load balanced managed VMs Solution
 
 Learn how to build and deploy your own proof of concept based on the deployed [Load balanced managed VMs](https://console.cloud.google.com/products/solutions/details/load-balanced-vms) Jump Start Solution. You can customize the Jump Start Solution deployment by creating a copy of the source code. You can modify the infrastructure and application code as needed and redeploy the solution with the changes.
 
