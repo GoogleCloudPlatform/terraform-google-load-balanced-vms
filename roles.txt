@@ -1,0 +1,4 @@
+roles/compute.admin
+roles/compute.instanceAdmin.v1
+roles/config.agent
+roles/serviceusage.serviceUsageAdmin
