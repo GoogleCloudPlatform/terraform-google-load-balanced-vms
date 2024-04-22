@@ -8,6 +8,28 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.4.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.3.1...v0.4.0) (2024-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Update Terraform terraform-google-modules/network/google to v9 ([#75](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/75))
+* **deps:** Update TF modules (major) ([#59](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/59))
+
+### Features
+
+* add support for make it mine and deploy via cloudbuild trigger … ([#80](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/80)) ([691c8ce](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/691c8ced11ef495f3d8680fec8f507ed0540fd40))
+* Test 2 nodes instead of 3 ([#78](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/78)) ([f561d65](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/f561d6511e86ca80b7b8b1a28501b26d48ee00ca))
+
+
+### Bug Fixes
+
+* **deps:** update cft/developer-tools docker tag to v1.14 ([#54](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/54)) ([b297fb7](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/b297fb7ed33e90374e1e7115d35e8a3e11efdafb))
+* **deps:** Update cft/developer-tools Docker tag to v1.16 ([#60](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/60)) ([f6d588e](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/f6d588e3d08ed528b107234bacd244ce103cb79c))
+* **deps:** Update cft/developer-tools Docker tag to v1.17 ([#64](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/64)) ([f99a708](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/f99a70855d8e497c9a0d905690a6dd55953e533d))
+* **deps:** Update Terraform terraform-google-modules/network/google to v9 ([#75](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/75)) ([5d46349](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/5d4634931cc1cec0054136335859bfd8142cb648))
+* **deps:** Update TF modules (major) ([#59](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/59)) ([92cfa87](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/92cfa87a067a44c5a00ecd9a4a31457dc994cc67))
+
 ## [0.3.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.2.0...v0.3.0) (2023-07-20)
 
 
