@@ -243,7 +243,7 @@ resource "google_compute_autoscaler" "main" {
 
 module "gce-lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google"
-  version = "~> 10.0"
+  version = "~> 11.0"
 
   project = var.project_id
   name    = "${var.deployment_name}-lb"
