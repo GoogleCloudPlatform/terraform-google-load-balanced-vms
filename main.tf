@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+# Placeholder change.
 locals {
   exemplar_machine_type = "e2-medium"
   node_machine_type     = "e2-micro"
