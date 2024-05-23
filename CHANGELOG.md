@@ -8,6 +8,17 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.5.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.4.0...v0.5.0) (2024-05-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Update Terraform GoogleCloudPlatform/lb-http/google to v11 ([#89](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/89))
+
+### Bug Fixes
+
+* **deps:** Update Terraform GoogleCloudPlatform/lb-http/google to v11 ([#89](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/89)) ([61247ea](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/61247eada37910f1582e0d96bb0e7bc300cb8864))
+
 ## [0.4.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.3.1...v0.4.0) (2024-04-22)
 
 
