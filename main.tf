@@ -106,7 +106,7 @@ EOF
     auto_delete = true
     device_name = "${var.deployment_name}-exemplar"
     initialize_params {
-      image = "family/debian-10"
+      image = "family/debian-12"
       size  = 200
       type  = "pd-standard"
     }
