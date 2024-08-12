@@ -8,6 +8,13 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.5.1](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.5.0...v0.5.1) (2024-08-12)
+
+
+### Bug Fixes
+
+* Update debian-10 to debian-12 ([#98](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/98)) ([b696a47](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/b696a47d771c3a113b532ec35bf0476175274788))
+
 ## [0.5.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.4.0...v0.5.0) (2024-05-19)
 
 
