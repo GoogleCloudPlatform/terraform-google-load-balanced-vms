@@ -8,6 +8,20 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.6.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.5.0...v0.6.0) (2024-10-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Update Terraform GoogleCloudPlatform/lb-http/google to v12 ([#106](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/106))
+* **deps:** Update Terraform terraform-google-modules/project-factory/google to v17 ([#105](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/105))
+
+### Bug Fixes
+
+* **deps:** Update Terraform GoogleCloudPlatform/lb-http/google to v12 ([#106](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/106)) ([a7dd9ab](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/a7dd9aba352281b34ac56b8d2b195d79e5aeb9d6))
+* **deps:** Update Terraform terraform-google-modules/project-factory/google to v17 ([#105](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/105)) ([c48f19b](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/c48f19bb57e648175a710bf93b5ea751195acc8d))
+* Update debian-10 to debian-12 ([#98](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/98)) ([b696a47](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/b696a47d771c3a113b532ec35bf0476175274788))
+
 ## [0.5.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.4.0...v0.5.0) (2024-05-19)
 
 
