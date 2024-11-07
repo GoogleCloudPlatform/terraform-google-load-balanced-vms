@@ -16,7 +16,7 @@
 
 module "load_balanced_vms" {
   source  = "GoogleCloudPlatform/load-balanced-vms/google"
-  version = "~> 0.5"
+  version = "~> 0.6"
 
   project_id = var.project_id
   region     = "us-central1"
