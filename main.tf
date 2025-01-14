@@ -42,7 +42,7 @@ module "project-services" {
 module "vpc" {
   count   = local.custom_network ? 0 : 1
   source  = "terraform-google-modules/network/google"
-  version = "~> 9.0"
+  version = "~> 10.0"
 
   project_id   = var.project_id
   network_name = "${var.deployment_name}-network"
