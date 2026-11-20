@@ -72,7 +72,8 @@ resource "google_compute_firewall" "private-allow-ssh" {
     ports    = ["22"]
   }
 
-  source_ranges = ["0.0.0.0/0"]
+  # Restrict SSH ingress to Google Cloud Identity-Aware Proxy (IAP) TCP forwarding.
+  source_ranges = ["35.235.240.0/20"]
 
   target_tags = ["private-ssh"]
 }

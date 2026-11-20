@@ -144,6 +144,15 @@ func TestSimpleExample(t *testing.T) {
 			assert.Nil(err)
 		})
 
+		t.Run("Firewall - SSH restricted to IAP", func(t *testing.T) {
+			cmdstr := fmt.Sprintf("compute firewall-rules describe %s-allow-ssh", prefix)
+			ops := gcloud.WithCommonArgs([]string{"--project", projectID, "--format", "json"})
+			fw := gcloud.Run(t, cmdstr, ops).Array()
+			sourceRanges := fw[0].Get("sourceRanges").Array()
+			assert.Len(sourceRanges, 1, "expected exactly one source range on SSH firewall rule")
+			assert.Equal("35.235.240.0/20", sourceRanges[0].String(), "expected SSH firewall rule to restrict ingress to IAP range")
+		})
+
 		t.Run("Test healthchecks", func(t *testing.T) {
 			backendname := fmt.Sprintf("%s-lb-backend-default", prefix)
 			gcommmand := fmt.Sprintf("compute backend-services get-health %s", backendname)
