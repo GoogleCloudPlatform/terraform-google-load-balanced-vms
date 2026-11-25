@@ -8,6 +8,13 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This changelog is generated automatically based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+## [0.6.1](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.6.0...v0.6.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* restrict SSH firewall ingress to IAP range ([#148](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/issues/148)) ([da33c81](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/commit/da33c81078099b1950a35d47fde37bf9eca35a1c))
+
 ## [0.6.0](https://github.com/GoogleCloudPlatform/terraform-google-load-balanced-vms/compare/v0.5.0...v0.6.0) (2024-10-30)
 
 
